@@ -18,7 +18,7 @@ struct Order {
 
 class book {
 public:
-  book() : order_counter(0), seller_counter(0) {};
+  book() : order_counter(0) {};
 
   Price highest_bid() {
     if (bid_book.empty())
@@ -54,7 +54,7 @@ public:
   }
 
   void add_seller(const Order &order) {
-    uint64_t next_id = ++seller_counter;
+    uint64_t next_id = ++order_counter;
 
     Order internal_order{next_id, order.user_id, order.amount, order.price};
     ask_book[order.price].push_back(internal_order);
@@ -79,8 +79,8 @@ public:
 private:
   // buyers
   std::map<Price, std::vector<Order>, std::greater<Price>> bid_book;
-  std::atomic<uint64_t> order_counter;
   // sellers
   std::map<Price, std::vector<Order>> ask_book;
-  std::atomic<uint64_t> seller_counter;
+
+  std::atomic<uint64_t> order_counter;
 };
