@@ -58,11 +58,57 @@ DROGON_TEST(Time_Priority) {
 DROGON_TEST(Perfect_match) {
   book b;
   for (int i = 0; i < 10; ++i) {
-    b.add_bid({.user_id = "pwat", .amount = 69, .price = 420.0});
-    b.add_seller({.user_id = "interested", .amount = 69, .price = 420.0});
+    b.add_bid({.user_id = "10_buyers", .amount = 69, .price = 420.0});
+    b.add_seller({.user_id = "10_sellers", .amount = 69, .price = 420.0});
   }
 
-  CHECK(b.queue_size_at_price(420.0) == 0);
+  CHECK(b.bid_queue_size_at_price(420.0) == 0);
+}
+
+DROGON_TEST(One_big_order_many_small_orders) {
+  book b;
+  b.add_seller({.user_id = "pwat1", .amount = 10.0, .price = 100.0});
+  b.add_seller({.user_id = "pwat2", .amount = 10.0, .price = 100.0});
+  b.add_seller({.user_id = "pwat3", .amount = 10.0, .price = 100.0});
+  b.add_bid({.user_id = "pwatbuy", .amount = 25.0, .price = 100.0});
+
+  // The buy queue should be completely empty because it was fully filled
+  CHECK(b.bid_queue_size_at_price(100.0) == 0);
+
+  // The sell queue should have exactly ONE order left inside it (the partially
+  // filled third one)
+  CHECK(b.ask_queue_size_at_price(100.0) == 1);
+  // That remaining order must have exactly 5.0 units left
+  CHECK(b.get_top_ask_amount(100) == 5.0);
+}
+
+DROGON_TEST(Price_Overlap) {
+  book b;
+  b.add_seller({.user_id = "desperate", .amount = 10.0, .price = 95.0});
+  b.add_bid({.user_id = "pwato", .amount = 10.0, .price = 100.0});
+
+  CHECK(b.bid_queue_size_at_price(100.0) == 0);
+  CHECK(b.ask_queue_size_at_price(100.0) == 0);
+}
+
+DROGON_TEST(Sweep_Book) {
+  book b;
+  b.add_seller({.user_id = "sell1", .amount = 5.0, .price = 101.0});
+  b.add_seller({.user_id = "sell2", .amount = 5.0, .price = 102.0});
+  b.add_bid({.user_id = "buy1", .amount = 10.0, .price = 105.0});
+
+  CHECK(b.ask_queue_size_at_price(101.0) == 0);
+  CHECK(b.ask_queue_size_at_price(102.0) == 0);
+  CHECK(b.bid_queue_size_at_price(105.0) == 0);
+}
+
+DROGON_TEST(No_Match) {
+  book b;
+  b.add_bid({.user_id = "buy1", .amount = 10.0, .price = 90.0});
+  b.add_seller({.user_id = "sell1", .amount = 10.0, .price = 110.0});
+
+  CHECK(b.bid_queue_size_at_price(90.0) == 1);
+  CHECK(b.ask_queue_size_at_price(110.0) == 1);
 }
 
 int main(int argc, char **argv) {

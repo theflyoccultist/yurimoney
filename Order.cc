@@ -24,7 +24,7 @@ void book::add_bid(const Order &order) {
   }
 }
 
-size_t book::queue_size_at_price(Price price) {
+size_t book::bid_queue_size_at_price(Price price) {
   if (bid_book.find(price) == bid_book.end())
     return 0;
   return bid_book[price].size();
@@ -39,6 +39,19 @@ void book::add_seller(const Order &order) {
 
   Order internal_order{next_id, order.user_id, order.amount, order.price};
   ask_book[order.price].push_back(internal_order);
+}
+
+size_t book::ask_queue_size_at_price(Price price) {
+  if (ask_book.find(price) == ask_book.end())
+    return 0;
+  return ask_book[price].size();
+}
+
+Amount book::get_top_ask_amount(Price price) {
+  if (ask_book.empty())
+    return 0.0;
+
+  return ask_book[price].front().amount;
 }
 
 bool book::match(Price price) {

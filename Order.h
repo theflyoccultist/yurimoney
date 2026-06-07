@@ -23,11 +23,12 @@ public:
   Price lowest_bid();
 
   void add_bid(const Order &order);
-
-  size_t queue_size_at_price(Price price);
+  size_t bid_queue_size_at_price(Price price);
   const std::vector<Order> &get_bids_at_price(Price price);
 
   void add_seller(const Order &order);
+  size_t ask_queue_size_at_price(Price price);
+  Amount get_top_ask_amount(Price price);
 
 private:
   bool match(Price price);
