@@ -58,8 +58,8 @@ DROGON_TEST(Time_Priority) {
 DROGON_TEST(Perfect_match) {
   book b;
   for (int i = 0; i < 10; ++i) {
-    b.add_bid({.user_id = "10_buyers", .amount = 69, .price = 420.0});
     b.add_seller({.user_id = "10_sellers", .amount = 69, .price = 420.0});
+    b.add_bid({.user_id = "10_buyers", .amount = 69, .price = 420.0});
   }
 
   CHECK(b.bid_queue_size_at_price(420.0) == 0);
@@ -104,8 +104,8 @@ DROGON_TEST(Sweep_Book) {
 
 DROGON_TEST(No_Match) {
   book b;
-  b.add_bid({.user_id = "buy1", .amount = 10.0, .price = 90.0});
   b.add_seller({.user_id = "sell1", .amount = 10.0, .price = 110.0});
+  b.add_bid({.user_id = "buy1", .amount = 10.0, .price = 90.0});
 
   CHECK(b.bid_queue_size_at_price(90.0) == 1);
   CHECK(b.ask_queue_size_at_price(110.0) == 1);
