@@ -2,6 +2,7 @@
 
 #include <atomic>
 #include <map>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -38,4 +39,5 @@ private:
   std::map<Price, std::vector<Order>> ask_book;
 
   std::atomic<uint64_t> order_counter;
+  std::mutex book_mutex;
 };

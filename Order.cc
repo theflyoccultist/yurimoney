@@ -14,6 +14,8 @@ Price book::lowest_bid() {
 }
 
 void book::add_bid(const Order &order) {
+  std::lock_guard<std::mutex> lock(book_mutex);
+
   uint64_t next_id = ++order_counter;
 
   Order internal_order{next_id, order.user_id, order.amount, order.price};
@@ -41,6 +43,8 @@ Price book::lowest_sell() {
 }
 
 void book::add_seller(const Order &order) {
+  std::lock_guard<std::mutex> lock(book_mutex);
+
   uint64_t next_id = ++order_counter;
 
   Order internal_order{next_id, order.user_id, order.amount, order.price};
@@ -70,7 +74,7 @@ void book::match() {
   Price buyer_price = best_bid_it->first;
   Price seller_price = best_ask_it->first;
 
-  // Does the buyer's max budged cover the seller's asking price?
+  // Does the buyer's max budget cover the seller's asking price?
   if (buyer_price >= seller_price) {
     auto &buy_queue = best_bid_it->second;
     auto &sell_queue = best_ask_it->second;
