@@ -14,10 +14,11 @@ public:
   METHOD_LIST_END
 
   void place_bid(const HttpRequestPtr &req,
-                 std::function<void(const HttpRequestPtr &)> &&callback);
+                 std::function<void(const HttpResponsePtr &)> &&callback);
   void place_ask(const HttpRequestPtr &req,
-                 std::function<void(const HttpRequestPtr &)> &&callback);
+                 std::function<void(const HttpResponsePtr &)> &&callback);
 
 private:
+  Json::Value toJson(const Order &order);
   book order_book;
 };
