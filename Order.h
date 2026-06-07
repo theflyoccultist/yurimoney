@@ -23,7 +23,7 @@ public:
   Price highest_bid();
   Price lowest_bid();
 
-  void add_bid(const Order &order);
+  Order add_bid(const Order &order);
   size_t bid_queue_size_at_price(Price price);
   const std::vector<Order> &get_bids_at_price(Price price);
 

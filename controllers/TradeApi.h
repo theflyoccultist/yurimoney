@@ -19,6 +19,7 @@ public:
                  std::function<void(const HttpResponsePtr &)> &&callback);
 
 private:
-  Json::Value toJson(const Order &order);
+  void bad_request(std::function<void(const HttpResponsePtr &)> &&callback);
+  Json::Value to_json(const Order &order);
   book order_book;
 };

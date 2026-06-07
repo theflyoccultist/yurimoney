@@ -13,15 +13,16 @@ Price book::lowest_bid() {
   return bid_book.rbegin()->first;
 }
 
-void book::add_bid(const Order &order) {
+Order book::add_bid(const Order &order) {
   std::lock_guard<std::mutex> lock(book_mutex);
 
   uint64_t next_id = ++order_counter;
 
-  Order internal_order{next_id, order.user_id, order.amount, order.price};
-  bid_book[order.price].push_back(internal_order);
+  Order finalized_order{next_id, order.user_id, order.amount, order.price};
+  bid_book[order.price].push_back(finalized_order);
 
   match();
+  return finalized_order;
 }
 
 size_t book::bid_queue_size_at_price(Price price) {
