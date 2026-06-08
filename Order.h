@@ -26,12 +26,15 @@ public:
   Order add_bid(const Order &order);
   size_t bid_queue_size_at_price(Price price);
   const std::vector<Order> &get_bids_at_price(Price price);
+  const std::map<Price, std::vector<Order>, std::greater<Price>> &
+  get_all_bids();
 
   Price lowest_sell();
 
-  void add_seller(const Order &order);
+  Order add_seller(const Order &order);
   size_t ask_queue_size_at_price(Price price);
   Amount get_top_ask_amount(Price price);
+  const std::map<Price, std::vector<Order>> &get_all_asks();
 
 private:
   void match();

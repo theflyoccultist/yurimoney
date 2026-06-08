@@ -37,19 +37,25 @@ const std::vector<Order> &book::get_bids_at_price(Price price) {
   return bid_book[price];
 }
 
+const std::map<Price, std::vector<Order>, std::greater<Price>> &
+book::get_all_bids() {
+  return bid_book;
+}
+
 Price book::lowest_sell() {
   if (ask_book.empty())
     return 0.0;
   return ask_book.begin()->first;
 }
 
-void book::add_seller(const Order &order) {
+Order book::add_seller(const Order &order) {
   std::lock_guard<std::mutex> lock(book_mutex);
 
   uint64_t next_id = ++order_counter;
 
-  Order internal_order{next_id, order.user_id, order.amount, order.price};
-  ask_book[order.price].push_back(internal_order);
+  Order finalized_order{next_id, order.user_id, order.amount, order.price};
+  ask_book[order.price].push_back(finalized_order);
+  return finalized_order;
 }
 
 size_t book::ask_queue_size_at_price(Price price) {
@@ -63,6 +69,10 @@ Amount book::get_top_ask_amount(Price price) {
     return 0.0;
 
   return ask_book[price].front().amount;
+}
+
+const std::map<Price, std::vector<Order>> &book::get_all_asks() {
+  return ask_book;
 }
 
 void book::match() {

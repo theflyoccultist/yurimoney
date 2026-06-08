@@ -1,6 +1,5 @@
 #include <drogon/drogon.h>
 
-#include <functional>
 #include <string>
 
 using namespace drogon;
@@ -11,14 +10,6 @@ int main() {
   // Load config file
   // drogon::app().loadConfigFile("../config.json");
   // drogon::app().loadConfigFile("../config.yaml");
-
-  app().registerHandler(
-      "/hello", [](const HttpRequestPtr &req,
-                   std::function<void(const HttpResponsePtr &)> &&callback) {
-        auto resp = HttpResponse::newHttpResponse();
-        resp->setBody("Hello, World!");
-        callback(resp);
-      });
 
   // Run HTTP framework,the method will block in the internal event loop
   app().run();
